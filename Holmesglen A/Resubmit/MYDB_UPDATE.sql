@@ -1,0 +1,157 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb_UPDATE
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb_UPDATE
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb_UPDATE` ;
+USE `mydb_UPDATE` ;
+
+-- -----------------------------------------------------
+-- Table `mydb_UPDATE`.`PERSON`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb_UPDATE`.`PERSON` (
+  `LAST_NAME` VARCHAR(45) NOT NULL,
+  `FIRST_NAME` VARCHAR(45) NOT NULL,
+  `EMAIL` VARCHAR(45) NOT NULL,
+  `PERSON_ID` INT NOT NULL,
+  `MOBILE` INT NOT NULL,
+  `AGE` INT NOT NULL,
+  `DOB` DATE NOT NULL,
+  PRIMARY KEY (`PERSON_ID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb_UPDATE`.`STUDENTS`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb_UPDATE`.`STUDENTS` (
+  `STUDENT_EMAIL` VARCHAR(45) NOT NULL,
+  `STUDENT_NUMBER` INT NOT NULL,
+  `STUDENT_ID` INT NOT NULL,
+  `FIRST_NAME` VARCHAR(45) NOT NULL,
+  `LAST_NAME` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`STUDENT_ID`),
+  CONSTRAINT `fk_STUDENTS_PERSON1`
+    FOREIGN KEY (`STUDENT_ID`)
+    REFERENCES `mydb_UPDATE`.`PERSON` (`PERSON_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `fk_STUDENTS_PERSON1_idx` ON `mydb_UPDATE`.`STUDENTS` (`STUDENT_ID` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `mydb_UPDATE`.`TEACHERS`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb_UPDATE`.`TEACHERS` (
+  `TEACHER_EMAIL` VARCHAR(45) NOT NULL,
+  `PAY_CODE` VARCHAR(45) NOT NULL,
+  `TEACHER_ID` INT NOT NULL,
+  `FIRST_NAME` VARCHAR(45) NOT NULL,
+  `LAST_NAME` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`TEACHER_ID`),
+  CONSTRAINT `fk_TEACHERS_PERSON1`
+    FOREIGN KEY (`TEACHER_ID`)
+    REFERENCES `mydb_UPDATE`.`PERSON` (`PERSON_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `fk_TEACHERS_PERSON1_idx` ON `mydb_UPDATE`.`TEACHERS` (`TEACHER_ID` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `mydb_UPDATE`.`DEPARTMENT`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb_UPDATE`.`DEPARTMENT` (
+  `DEPARTMENT_ID` INT NOT NULL,
+  `DEPARTMENT_NAME` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`DEPARTMENT_ID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb_UPDATE`.`COURSE`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb_UPDATE`.`COURSE` (
+  `COURSE_ID` INT NOT NULL,
+  `COURSE_NAME` VARCHAR(45) NOT NULL,
+  `DEPARTMENT_ID` INT NOT NULL,
+  PRIMARY KEY (`COURSE_ID`),
+  CONSTRAINT `fk_COURSE_DEPARTMENT1`
+    FOREIGN KEY (`DEPARTMENT_ID`)
+    REFERENCES `mydb_UPDATE`.`DEPARTMENT` (`DEPARTMENT_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `fk_COURSE_DEPARTMENT1_idx` ON `mydb_UPDATE`.`COURSE` (`DEPARTMENT_ID` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `mydb_UPDATE`.`SUBJECTS`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb_UPDATE`.`SUBJECTS` (
+  `SUBJECT_ID` INT NOT NULL,
+  `SUBJECT_NAME` VARCHAR(45) NOT NULL,
+  `COURSE_ID` INT NOT NULL,
+  `AVERAGE_SCORE` INT NOT NULL,
+  PRIMARY KEY (`SUBJECT_ID`),
+  CONSTRAINT `fk_SUBJECTS_COURSE1`
+    FOREIGN KEY (`COURSE_ID`)
+    REFERENCES `mydb_UPDATE`.`COURSE` (`COURSE_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `fk_SUBJECTS_COURSE1_idx` ON `mydb_UPDATE`.`SUBJECTS` (`COURSE_ID` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `mydb_UPDATE`.`CLASS`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb_UPDATE`.`CLASS` (
+  `CLASS_ID` INT NOT NULL,
+  `CLASS_NAME` VARCHAR(45) NOT NULL,
+  `START_TIME` VARCHAR(45) NOT NULL,
+  `SUBJECT_ID` INT NOT NULL,
+  `TEACHER_ID` INT NOT NULL,
+  `STUDENT_ID` INT NOT NULL,
+  `NUMBER_OF_STUDENTS` INT NOT NULL,
+  PRIMARY KEY (`CLASS_ID`),
+  CONSTRAINT `fk_CLASS_SUBJECTS1`
+    FOREIGN KEY (`SUBJECT_ID`)
+    REFERENCES `mydb_UPDATE`.`SUBJECTS` (`SUBJECT_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_CLASS_TEACHERS1`
+    FOREIGN KEY (`TEACHER_ID`)
+    REFERENCES `mydb_UPDATE`.`TEACHERS` (`TEACHER_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_CLASS_STUDENTS1`
+    FOREIGN KEY (`STUDENT_ID`)
+    REFERENCES `mydb_UPDATE`.`STUDENTS` (`STUDENT_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `fk_CLASS_SUBJECTS1_idx` ON `mydb_UPDATE`.`CLASS` (`SUBJECT_ID` ASC) VISIBLE;
+
+CREATE INDEX `fk_CLASS_TEACHERS1_idx` ON `mydb_UPDATE`.`CLASS` (`TEACHER_ID` ASC) VISIBLE;
+
+CREATE INDEX `fk_CLASS_STUDENTS1_idx` ON `mydb_UPDATE`.`CLASS` (`STUDENT_ID` ASC) VISIBLE;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
